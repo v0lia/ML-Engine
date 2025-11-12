@@ -1,4 +1,4 @@
-import torch
+# import torch
 import torch.nn as nn
 # import torch.nn.functional as F
 
@@ -13,7 +13,7 @@ class NeuralNetwork(nn.Module):
             
             nn.Conv2d(6,16,5, padding=2),
             nn.ReLU(),
-            nn.MaxPool2d(2),    # in 14x14, out 7x7
+            nn.MaxPool2d(2)    # in 14x14, out 7x7
         )
         self.classifier = nn.Sequential(
             nn.Linear(16*7*7, 120), # 7x7 as (28x28)/2/2
@@ -24,6 +24,6 @@ class NeuralNetwork(nn.Module):
     )
     def forward(self, x):
         x = self.features(x)
-        x = torch.flatten(x,1)
+        x = x.flatten(1)
         x = self.classifier(x)
         return x    # logits

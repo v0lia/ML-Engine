@@ -1,7 +1,13 @@
+import sys
+from pathlib import Path
+
 # import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-from pathlib import Path
+
+PROJECT_ROOT = Path(sys.path[0]).resolve()
+
+dataset_folder = str(PROJECT_ROOT / "datasets")
 
 def get_transform():
     transform = transforms.Compose([
@@ -12,7 +18,7 @@ def get_transform():
 
 def get_dataset(mode_bool: bool):
     dataset = datasets.FashionMNIST(
-        root=str(Path(__file__).resolve().parent.parent / "data"),
+        root=dataset_folder,
         train=mode_bool,
         download=True,
         transform=get_transform())
