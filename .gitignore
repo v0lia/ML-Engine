@@ -1,0 +1,13 @@
+datasets/
+results/
+checkpoints/
+
+__pycache__/
+*.pyc
+*.pyo
+
+.venv/
+.vscode/
+.idea/
+
+.VSCodeCounter/
