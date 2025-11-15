@@ -1,13 +1,14 @@
-import sys
-from pathlib import Path
+# get_data.py
+
+# import sys
+# from pathlib import Path
 
 # import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-PROJECT_ROOT = Path(sys.path[0]).resolve()
-
-dataset_folder = str(PROJECT_ROOT / "datasets")
+from src.utils.defaults import PROJECT_ROOT, default_dataset_path
+from src.utils.logger import get_logger
 
 def get_transform():
     transform = transforms.Compose([
@@ -17,16 +18,20 @@ def get_transform():
     return transform
 
 def get_dataset(mode_bool: bool):
+    logger = get_logger()
     dataset = datasets.FashionMNIST(
-        root=dataset_folder,
+        root=default_dataset_path.resolve(),
         train=mode_bool,
         download=True,
         transform=get_transform())
+        
+    logger.info(f"Dataset: {dataset.__class__.__name__}")
+    logger.info(f"Train size: {len(dataset)}" if mode_bool else f"Test size: {len(dataset)}")
+
     return dataset
 
-def get_dataloader(mode_bool: bool, config: dict):
+def get_dataloader(mode: str, config: dict):
     batch_size = config.get("batch_size", 64)
+    mode_bool = True if mode == "train" else False
     dataloader = DataLoader(get_dataset(mode_bool), batch_size=batch_size, shuffle=mode_bool)
     return dataloader
-
-

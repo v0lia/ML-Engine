@@ -3,6 +3,7 @@ results/
 checkpoints/
 
 __pycache__/
+*/__pycache__/
 *.pyc
 *.pyo
 
@@ -11,3 +12,4 @@ __pycache__/
 .idea/
 
 .VSCodeCounter/
+*.code-workspace

@@ -1,56 +1,53 @@
-'''
-Основные цели:
+# logger.py
 
-показать структуру проекта уровня “production-ready” (наличие логирования);
-
-иметь читаемые сообщения при запуске и ошибках.
-
-
-🔹 Минимальные задачи:
-Что логировать	        Пример
-Запуск скриптов	        [INFO] Starting training..., [INFO] Starting evaluation...
-Конфигурацию	        [INFO] Loaded config from src/config/config.yaml
-Девайс и параметры	    [INFO] Using device: cuda (NVIDIA RTX 4070)
-Размеры данных	        [INFO] Training set: 50000 samples, Validation: 10000 samples
-Начало/конец эпох	    [INFO] Epoch 5/10 completed. Loss=0.34, Acc=89.2%
-Сохранение чекпойнтов	[INFO] Saved checkpoint: results/checkpoints/model_epoch_5.pth
-Исключения/ошибки	    [ERROR] Failed to load model weights: File not found
-
-
-🔹 Минимальная реализация:
 import logging
+import sys
+from datetime import datetime
 
-def get_logger(name="train", log_file=None, level=logging.INFO):
+formatter = logging.Formatter(
+    fmt="[%(asctime)s] [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S")
+
+def get_logger(name="main"):
+    return logging.getLogger(name)
+
+def setup_logger(name="main", level=logging.INFO, run_dir=None):
     logger = logging.getLogger(name)
+    
+    if isinstance(level, str):
+        level = logging._nameToLevel.get(level.upper(), logging.INFO)
     logger.setLevel(level)
-    formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S")
 
-    # Консоль
-    ch = logging.StreamHandler()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
+    add_stream_handler(logger)
 
-    # (опционально) файл
-    if log_file:
-        fh = logging.FileHandler(log_file)
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
+    if run_dir is not None:        
+        add_file_handler(logger, run_dir)
+        
+    if sys.excepthook != handle_uncaught_exception:
+        sys.excepthook = handle_uncaught_exception
 
     return logger
 
+def add_stream_handler(logger):
+    if not any(isinstance(h, logging.StreamHandler) for h in logger.handlers):
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
 
-Использование:
+def add_file_handler(logger, run_dir):
+    if not any(isinstance(h, logging.FileHandler) for h in logger.handlers):
+        log_dir = (run_dir / "logs").resolve()
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_file = log_dir / f"{datetime.now():%Y%m%d-%H%M%S}.log"
 
-logger = get_logger("train")
-logger.info("Starting training...")
-logger.warning("Validation accuracy decreased!")
-logger.error("Failed to load dataset.")
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
-
-💡 На этом можно остановиться — этого достаточно, чтобы проект выглядел «живым» и структурированным.
-'''
-# seed.
-
-# (Опционально): время каждой эпохи, GPU usage.
-
-# Формат обычно простой: [TIME] [LEVEL] msg, пишется и в консоль, и в файл.
+def handle_uncaught_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+    logger = logging.getLogger("main")
+    logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+    

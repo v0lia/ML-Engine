@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 # import torch.nn.functional as F
 
-class NeuralNetwork(nn.Module):
+class FC(nn.Module):
     def __init__(self):
         super().__init__()
         # 1 input channel (gray)

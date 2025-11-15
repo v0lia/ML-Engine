@@ -1,8 +1,10 @@
+# CNN.py
+
 # import torch
 import torch.nn as nn
 # import torch.nn.functional as F
 
-class NeuralNetwork(nn.Module):
+class CNN(nn.Module):
     def __init__(self):
         super().__init__()
         # 1 input channel (gray), 6 features to find, 5x5 kernel
