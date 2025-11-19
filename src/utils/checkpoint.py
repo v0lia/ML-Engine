@@ -77,7 +77,7 @@ def load_checkpoint(checkpoint_path, config=None, device:torch.device=torch.devi
             raise e
 
     start_epoch = int(checkpoint.get("epoch", 0))
-    return model.to(device), optimizer, start_epoch
+    return model.to(device), model_class, optimizer, start_epoch
 
 def get_checkpoint_path(run_dir=None, name=None):
     if name:

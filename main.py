@@ -39,7 +39,7 @@ def main():
 
     if is_checkpoint:
         logger.info(f"[MAIN] Loading checkpoint from: {path}")
-        model, optimizer, start_epoch = load_checkpoint(checkpoint_path=path, device=device)
+        model, model_name, optimizer, start_epoch = load_checkpoint(checkpoint_path=path, device=device)
     else:
         logger.info(f"[MAIN] Loading model from: {path}")
         model = get_model(model_name)
