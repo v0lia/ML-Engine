@@ -1,14 +1,12 @@
-'''
-🔹 Минимальные задачи:
+# timer.py
 
-измерять общее время обучения;
-
-измерять время на evaluation (при желании — визуализацию).
-
-🔹 Минимальная реализация:
 import time
 
 class Timer:
+    def __init__(self, name=None, logger=None):
+        self.name = name
+        self.logger = logger
+        
     def __enter__(self):
         self.start = time.time()
         return self
@@ -16,26 +14,8 @@ class Timer:
     def __exit__(self, *args):
         self.end = time.time()
         self.interval = self.end - self.start
-        print(f"[TIMER] Elapsed time: {self.interval:.2f} seconds")
-
-# Использование:
-# with Timer():
-#     train(model, dataloader)
-
-
-💡 Всё. Без внешних зависимостей, без усложнений.
-Если добавить пару вызовов with Timer(): в train.py и evaluate.py, этого будет достаточно для production-ощущения.
-''' 
-
-
-# Цель: Замер времени этапов пайплайна (train/val/inference).
-
-# Содержимое: контекстный менеджер with timer("train"), простой print или запись в лог.
-
-##
-
-# Что будет внутри:
-
-# Контекстный менеджер with timer("train"):
-
-# Простая функция для печати или логирования времени в logger.
+        msg = f"[TIMER] Elapsed time: {self.interval:.2f} seconds"
+        if self.logger:
+            self.logger.info(msg)
+        else:
+            print(msg)

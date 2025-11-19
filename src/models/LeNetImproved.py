@@ -2,21 +2,23 @@
 import torch.nn as nn
 # import torch.nn.functional as F
 
-class NeuralNetwork(nn.Module):
-    def __init__(self):
+class LeNetImproved(nn.Module):
+    def __init__(self, num_classes=10):
         super().__init__()
-        # 1 input channel (gray), 6 features to find, 5x5 kernel
         self.features = nn.Sequential(
-            nn.Conv2d(1,6,5, padding=2),
+            nn.Conv2d(1,32,3, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(2),    # kernel 2x2; in 28x28, out 14x14
+            nn.MaxPool2d(2),    # kernel 2x2; 28x28 -> 14x14
             
-            nn.Conv2d(6,16,5, padding=2),
+            nn.Conv2d(32,64,3, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(2)    # in 14x14, out 7x7
+            nn.MaxPool2d(2),    # 14x14 -> 7x7
+        
+            nn.Conv2d(64,128,3, padding=1),
+            nn.ReLU()
         )
         self.classifier = nn.Sequential(
-            nn.Linear(16*7*7, 120), # 7x7 as (28x28)/2/2
+            nn.Linear(128*7*7, 120), # 7x7 as (28x28)/2/2
             nn.ReLU(),
             nn.Linear(120,84),
             nn.ReLU(),

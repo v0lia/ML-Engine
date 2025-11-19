@@ -1,13 +1,11 @@
+.VSCodeCounter
+*.code-workspace
+__pycache__
+
 datasets/
 results/
 checkpoints/
 
-__pycache__/
-*.pyc
-*.pyo
-
-.venv/
-.vscode/
-.idea/
-
-.VSCodeCounter/
+TODO.txt
+backlog.txt
+src/models/EfficientNetB0.py

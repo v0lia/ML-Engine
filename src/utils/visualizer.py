@@ -1,3 +1,6 @@
+# visualizer.py
+
+import copy
 import numpy as np
 from math import sqrt, ceil
 
@@ -8,9 +11,10 @@ import torchvision.utils
 
 from src.data import dataset_utils
 
-def add_model_graph(model, image, device, writer):
-    writer.add_graph(model.to("cpu"), image.to("cpu"))
-    model.to(device)
+def add_model_graph(model, image, writer):
+    model_cpu = copy.deepcopy(model).to('cpu')
+    image_cpu = image.to('cpu')
+    writer.add_graph(model_cpu, image_cpu)
     return
 
 def add_embedding(dataloader, writer, n=128, classes=dataset_utils.classes, tag="Data embedding"):
@@ -24,10 +28,11 @@ def add_embedding(dataloader, writer, n=128, classes=dataset_utils.classes, tag=
         labels = torch.from_numpy(labels)
     images = dataset_utils.normalize_images(images)
     features = images.reshape(n, -1)   # flatten
-    class_labels = [classes[l] for l in labels]    
-    writer.add_embedding(features.detach().to("cpu"),
+    class_labels = [classes[int(l)] for l in labels]
+    label_img = dataset_utils.get_label_img(images.to('cpu'))
+    writer.add_embedding(features.detach().to('cpu'),
                     metadata=class_labels,
-                    label_img=dataset_utils.get_label_img(images.to("cpu")),
+                    label_img=label_img,
                     tag=tag)
 
 def add_scalar(writer, tag, value, step=None):
@@ -39,8 +44,8 @@ def add_pr_curve(class_index, test_probs, test_labels, writer, step=None):
     pr_curve_truth = test_labels == class_index
 
     writer.add_pr_curve(dataset_utils.classes[class_index],
-                        pr_curve_truth.detach().to("cpu"),
-                        pr_curve_probs.detach().to("cpu"),
+                        pr_curve_truth.detach().to('cpu'),
+                        pr_curve_probs.detach().to('cpu'),
                         global_step=step)
     return
 
@@ -58,7 +63,7 @@ def add_sample_grid(images, writer, step=None, nrow=3, tag="Sample grid"):
     images = images[:n_images]
  
     img_grid = torchvision.utils.make_grid(images, nrow=nrow, normalize=True)   # , scale_each=True for better visibility   # , pad_value=0.5 for visible grid borders
-    writer.add_image(tag, img_grid.detach().to("cpu"), step)
+    writer.add_image(tag, img_grid.detach().to('cpu'), step)
     return
 
 # Someday
