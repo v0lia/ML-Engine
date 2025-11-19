@@ -131,7 +131,7 @@ During this project, I gained hands-on experience with:
 - GitHub: [v0lia](https://github.com/v0lia)
 - Email: <vitvolia@gmail.com>
 
-## Visuals
+## 📊 Visuals
 <p align="center">
   <img src=".gitimages/sample_grid.png" alt="Data sample grid"/><br>
   <em>Data sample grid</em>
@@ -158,6 +158,6 @@ During this project, I gained hands-on experience with:
 </p>
 
 <p align="center">
-  <img src=".gitimages/model_graph.PNG" alt="ResNet18 graph" width="50"/><br>
+  <img src=".gitimages/model_graph.PNG" alt="ResNet18 graph" width="150"/><br>
   <em>ResNet18 graph</em>
 </p>
