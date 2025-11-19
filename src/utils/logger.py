@@ -4,9 +4,11 @@ import logging
 import sys
 from datetime import datetime
 
+from src.utils.defaults import datetime_format_for_files
+
 formatter = logging.Formatter(
     fmt="[%(asctime)s] [%(levelname)s] %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S")
+    datefmt=datetime_format_for_files)
 
 def get_logger(name="main"):
     return logging.getLogger(name)
@@ -17,6 +19,9 @@ def setup_logger(name="main", level=logging.INFO, run_dir=None):
     if isinstance(level, str):
         level = logging._nameToLevel.get(level.upper(), logging.INFO)
     logger.setLevel(level)
+
+    if logger.handlers:
+        logger.handlers = []
 
     add_stream_handler(logger)
 

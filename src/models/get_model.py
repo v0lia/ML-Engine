@@ -39,5 +39,5 @@ def get_model(model_class_name):
         logger.error(error_text + f":\n{e}")
         raise ValueError(error_text)
 
-    logger.info(f"Model: {model_class_name}")
+    logger.info(f"Model: {model_class_name} from {matched_file.resolve()}")
     return model_class()

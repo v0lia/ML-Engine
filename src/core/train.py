@@ -20,7 +20,7 @@ def train(dataloader, model, loss_fn, optimizer, config, device, writer, run_dir
     model.to(device)
     model.train()   # set model to training mode
     
-    epochs = config.get("epochs", 3) + 1
+    epochs = config.get("epochs", 4)
 
     global_batch_n = start_epoch * len(dataloader)  # global batch counter
 
@@ -34,18 +34,22 @@ def train(dataloader, model, loss_fn, optimizer, config, device, writer, run_dir
             visualizer.add_scalar(writer, "Train/accuracy/epoch", epoch_acc, epoch)
             #visualizer.add_prediction_grid(model, images.to(device), labels.to(device), writer, step=epoch)   # TBD someday
             
-            if epoch < epochs:
+            model_name = model.__class__.__name__
+
+            if epoch + 1 < epochs:  # save to run_dir/checkpoints
                 save_checkpoint(run_dir=run_dir, model=model, optimizer=optimizer, epoch=epoch, config=config,
-                            name = f"epoch_{epoch+1}_acc_{epoch_acc:.3f}_loss_{epoch_loss:.3f}")
-            else:
+                            name = f"{model_name}_epoch_{epoch+1}_acc_{epoch_acc:.3f}_loss_{epoch_loss:.3f}")
+            else:                   # save last checkpoint to default folder, e.g.: root/checkpoints
                 save_checkpoint(run_dir=None, model=model, optimizer=optimizer, epoch=epoch, config=config,
-                            name = f"{model.__class__.__name__}_acc_{epoch_acc:.3f}_{datetime.now():{DATETIME_FORMAT}}")
+                            name = f"{model_name}_acc_{epoch_acc:.3f}_{datetime.now():{DATETIME_FORMAT}}")
                         
             logger.info(f"End epoch {epoch+1} | Accuracy: {epoch_acc:.3f} | Average loss: {epoch_loss:.3f}")
             logger.info(f"----------------------------------------------------\n")
     except KeyboardInterrupt:
         logger.warning(f"Training interrupted by user (Ctlr+C). Saving unfinished checkpoint...")
-        save_checkpoint(run_dir=run_dir, model=model, optimizer=optimizer, epoch=epoch, config=config)
+        unfinished_path = save_checkpoint(run_dir=run_dir, model=model, optimizer=optimizer, epoch=epoch, config=config,
+                            name=f"unfinished_{model_name}_epoch_{epoch+1}_acc_{epoch_acc:.3f}")
+        logger.info(f"Saved unfinished checkpoint to: {unfinished_path.resolve()}")
         return
 
     logger.info(f"Finished training!")

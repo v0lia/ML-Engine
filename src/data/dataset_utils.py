@@ -13,17 +13,18 @@ def get_label_img(images):  # -> [N,C,H,W] for TensorBoard
     logger = get_logger()
     if isinstance(images, np.ndarray):
         images = torch.from_numpy(images)
-
+    if not isinstance(images, torch.Tensor):
+        error_text = f"[dataset_utils.get_label_img]: Unsupported type {type(images)}"
+        logger.error(error_text)
+        raise TypeError(error_text)
+    
     if images.ndim == 3:    # Fashion-MNIST: grayscale [N,H,W] -> [N,C,H,W]
         return images.unsqueeze(1)
      
     elif images.ndim == 4:
         if images.shape[1] not in [1,3]:    # [N,H,W,C] -> [N,C,H,W]
             images = images.permute(0,3,1,2)
-            
-    # if no return made yet:
-    logger.error("get_label_img: Unsuported import format")
-    raise ValueError("get_label_img: Unsuported import format")    
+        return images 
 
 def normalize_images(images):   # will be needed beyond torchvision datasets
     return images

@@ -12,10 +12,10 @@ def get_loss_function(config: dict, device):
         loss_function_str = config["loss_function"]
         loss_function = getattr(nn, loss_function_str)()
     except (KeyError, TypeError):
-        logger.warning(f'Not found "loss_function" in config. Usind default: {default_loss_function_class}')
+        logger.warning(f'Not found "loss_function" in config. Using default: {default_loss_function_class}')
         loss_function = default_loss_function_class()
     except AttributeError:
-        logger.warning(f'Not found loss_function "{loss_function_str}" in torch.nn. Usind default: {default_loss_function_class}')
+        logger.warning(f'Not found loss_function "{loss_function_str}" in torch.nn. Using default: {default_loss_function_class}')
         loss_function = default_loss_function_class()
         
     logger.info(f"Loss_function: {loss_function}")

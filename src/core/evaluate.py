@@ -52,5 +52,5 @@ def evaluate(dataloader, model, loss_fn, config, device, writer):
 
     visualizer.add_pr_curves(test_probs, test_labels, writer, step=None)
     
-    logger.info(f"Finished evaluation! |Accuracy: {avg_acc:.3f} | Average loss: {avg_loss:.4f}")
+    logger.info(f"Finished evaluation! |Accuracy: {avg_acc:.3f} | Average loss: {avg_loss:.3f}")
     return

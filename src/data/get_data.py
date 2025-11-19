@@ -31,7 +31,9 @@ def get_dataset(mode_bool: bool):
     return dataset
 
 def get_dataloader(mode: str, config: dict):
+    logger = get_logger()
     batch_size = config.get("batch_size", 64)
     mode_bool = True if mode == "train" else False
     dataloader = DataLoader(get_dataset(mode_bool), batch_size=batch_size, shuffle=mode_bool)
+    logger.info(f"Batchs size: {batch_size}. Total batches: {len(dataloader)}")
     return dataloader

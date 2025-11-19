@@ -12,8 +12,8 @@ from src.models.get_model import get_model
 from src.utils.checkpoint import load_checkpoint
 from src.loss.get_loss_function import get_loss_function
 from src.optimizer.get_optimizer import get_optimizer
-from src.train import train
-from src.evaluate import evaluate
+from src.core.train import train
+from src.core.evaluate import evaluate
 from src.utils import config as Config, argparser, seed, get_run_dir, logger as Logger, tensorboard_utils
 
 def main():

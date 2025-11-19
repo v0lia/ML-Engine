@@ -16,12 +16,12 @@ def save_checkpoint(run_dir, model, optimizer, epoch, config, name=None) -> Path
     checkpoint_path = get_checkpoint_path(run_dir=run_dir, name=name)
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
 
-    optimizer_config = make_optimizer_config(config)
+    saved_config = config if config is not None else make_optimizer_config()
 
     torch.save({
         "model_class": model.__class__.__name__,
         "model_state_dict": model.state_dict(),
-        "optimizer_config": optimizer_config,
+        "config": saved_config,
         "optimizer_state_dict": optimizer.state_dict(),
         "epoch": int(epoch)
     }, checkpoint_path)
@@ -50,39 +50,34 @@ def load_checkpoint(checkpoint_path, config=None, device:torch.device=torch.devi
     model = get_model(model_class)
     model.load_state_dict(checkpoint["model_state_dict"])
 
-    optimizer_config = checkpoint.get("optimizer_config", None)
-    if optimizer_config is None:
-        if config is None:
+    saved_config = checkpoint.get("config", None)
+    if saved_config is None:
+        if config is not None:
+            error_text = f"[CHECKPOINT] Not found optimizer_config in checkpoint: {checkpoint_path}. Using general config"
+            logger.warning(error_text)
+            saved_config = config
+        else:
             error_text = f"[CHECKPOINT] Not found optimizer_config in checkpoint: {checkpoint_path}"
             logger.error(error_text)     
             raise RuntimeError(error_text)
-        else:
-            error_text = f"[CHECKPOINT] Not found optimizer_config in checkpoint: {checkpoint_path}. Using general config: {config.get("optimizer", "optimizer:")}"
-            logger.warning(error_text)
-            optimizer_config = config
   
-    optimizer = get_optimizer(model, optimizer_config)
+    optimizer = get_optimizer(model, saved_config)
 
     if "optimizer_state_dict" in checkpoint:
         try:
-            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+            opt_state = checkpoint["optimizer_state_dict"]
+            for _, v in opt_state.items():
+                if isinstance(v, dict):
+                    for sk, sv in v.items():
+                       if isinstance(sv, torch.Tensor):
+                        v[sk] = sv.to('cpu') 
+            optimizer.load_state_dict(opt_state)
         except Exception as e:
-            # sometimes optimizer states contain tensors on different devices; map them
             logger.error(f"[CHECKPOINT] optimizer.load_state_dict failed: {e}")
-            # No universal remedy here, so re-raise with context.
             raise e
 
     start_epoch = int(checkpoint.get("epoch", 0))
-
     return model.to(device), optimizer, start_epoch
-
-def make_optimizer_config(config):
-    if not isinstance(config, dict):
-        return {"optimizer": {}}
-    opt_cfg = config.get("optimizer",{})
-    if not isinstance(opt_cfg, dict):
-        opt_cfg = {}
-    return {"optimizer": opt_cfg}
 
 def get_checkpoint_path(run_dir=None, name=None):
     if name:
@@ -175,3 +170,11 @@ def find_checkpoint_by_name(raw) -> Path | None:
 
     logger.warning(f"[CHECKPOINT] Not found: {raw}")        
     return None
+
+def make_optimizer_config(config=None):
+    if not isinstance(config, dict) or config is None:
+        return {"optimizer": {}}
+    opt_cfg = config.get("optimizer",{})
+    if not isinstance(opt_cfg, dict):
+        opt_cfg = {}
+    return {"optimizer": opt_cfg}

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 # import torch.nn.functional as F
 
-class FC(nn.Module):
+class MLP(nn.Module):
     def __init__(self):
         super().__init__()
         # 1 input channel (gray)
