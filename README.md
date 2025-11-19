@@ -32,7 +32,7 @@ Current reference pipeline: training convolutional neural networks on the Fashio
 - **Tools:** torch, torchvision, TensorBoard
 
 ## 📊 Visual Outputs
-![Data sample grid](.gitimages/sample_grid.PNG)
+![Data sample grid](.gitimages/sample_grid.png)
 ![Data embedding](.gitimages/data_embedding.PNG)
 ![ResNet18 model graph](.gitimages/model_graph.PNG)
 
