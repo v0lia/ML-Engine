@@ -132,17 +132,27 @@ During this project, I gained hands-on experience with:
 - Email: <vitvolia@gmail.com>
 
 ## Visuals
-![Data sample grid](.gitimages/sample_grid.png)  
-*Data sample grid*
+<p align="center">
+  <img src=".gitimages/sample_grid.png" alt="Data sample grid"/><br>
+  <em>Data sample grid</em>
+</p>
 
-![Data embedding](.gitimages/data_embedding.PNG)  
-*Data embedding*
+<p align="center">
+  <img src=".gitimages/data_embedding.png" alt="Data embedding" width="400"/><br>
+  <em>Data embedding</em>
+</p>
 
-![Epoch loss curves](.gitimages/epoch_loss_curves.PNG)  
-*Epoch loss curves*
+<p align="center">
+  <img src=".gitimages/epoch_loss_curves.png" alt="Epoch loss curves" width="400"/><br>
+  <em>Data Epoch loss curves</em>
+</p>
 
-![Epoch accuracy curves](.gitimages/epoch_accuracy_curves.PNG)  
-*Epoch accuracy curves*
+<p align="center">
+  <img src=".gitimages/epoch_accuracy_curves.png" alt="Epoch accuracy curves" width="400"/><br>
+  <em>Epoch accuracy curves</em>
+</p>
 
-![Precision-Recall curves](.gitimages/pr_curves.PNG)  
-*Precision-Recall curves*
+<p align="center">
+  <img src=".gitimages/pr-curves.png" alt="Precision-Recall curves" width="400"/><br>
+  <em>Precision-Recall curves</em>
+</p>
